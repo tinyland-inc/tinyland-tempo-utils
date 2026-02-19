@@ -435,7 +435,7 @@ export class SpanReader {
         return null;
       }
 
-      return await response.json();
+      return await response.json() as OTLPTraceResponse;
     } catch (error) {
       logger.warn('Error fetching full trace', {
         traceID,
