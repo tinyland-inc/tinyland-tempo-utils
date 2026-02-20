@@ -1,5 +1,5 @@
 /**
- * @tinyland-inc/tinyland-tempo-utils
+ * @tummycrypt/tinyland-tempo-utils
  *
  * Tempo query utilities and child span analysis for Grafana Tempo.
  * Provides TraceQL query builder, batch query execution, and backward-compatible
@@ -11,7 +11,7 @@
  *   configureTempoUtils,
  *   queryTraceQL,
  *   SpanReader,
- * } from '@tinyland-inc/tinyland-tempo-utils';
+ * } from '@tummycrypt/tinyland-tempo-utils';
  *
  * // Configure once at startup
  * configureTempoUtils({
@@ -31,7 +31,7 @@
  * const geo = await reader.readGeo(trace);
  * ```
  *
- * @module @tinyland-inc/tinyland-tempo-utils
+ * @module @tummycrypt/tinyland-tempo-utils
  */
 
 // Configuration

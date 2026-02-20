@@ -11,7 +11,7 @@
  *
  * @example
  * ```typescript
- * import { configureTempoUtils } from '@tinyland-inc/tinyland-tempo-utils';
+ * import { configureTempoUtils } from '@tummycrypt/tinyland-tempo-utils';
  *
  * configureTempoUtils({
  *   logger: myStructuredLogger,

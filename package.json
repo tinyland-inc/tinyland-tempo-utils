@@ -1,5 +1,5 @@
 {
-  "name": "@tinyland-inc/tinyland-tempo-utils",
+  "name": "@tummycrypt/tinyland-tempo-utils",
   "version": "0.1.0",
   "description": "Tempo query utilities and child span analysis for Grafana Tempo",
   "type": "module",
@@ -48,5 +48,9 @@
   },
   "engines": {
     "node": ">=22.0.0"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
   }
 }
