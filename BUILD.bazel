@@ -22,7 +22,7 @@ ts_project(
             "src/**/*.test.ts",
             "src/**/*.spec.ts",
         ],
-    ),
+    ) + ["package.json"],
     declaration = True,
     declaration_map = True,
     source_map = True,
@@ -55,7 +55,7 @@ vitest_bin.vitest_test(
     data = [
         ":node_modules",
         "tsconfig.json",
-        "//packages:tsconfig.base.json",
+        "//packages:tsconfig_base",
         ":node_modules/vitest",
         "vitest.config.ts",
     ] + glob(["src/**/*.ts"]) + glob(["tests/**/*.test.ts", "tests/**/*.ts"]),
