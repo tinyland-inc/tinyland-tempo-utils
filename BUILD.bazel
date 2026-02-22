@@ -6,7 +6,6 @@ Dual-mode build: works with both pnpm (standalone) and Bazel (CI/production).
   Monorepo:   bazel build //packages/tinyland-tempo-utils/...
 """
 
-load("@aspect_rules_js//js:defs.bzl", "js_library", "js_test")
 load("@aspect_rules_js//npm:defs.bzl", "npm_package")
 load("@aspect_rules_ts//ts:defs.bzl", "ts_project")
 load("@npm//:defs.bzl", "npm_link_all_packages")
@@ -29,6 +28,9 @@ ts_project(
     source_map = True,
     tsconfig = ":tsconfig.json",
     transpiler = "tsc",
+    out_dir = "dist",
+    root_dir = "src",
+    validate = False,
     deps = [
         ":node_modules",
         "//packages:tsconfig_base",
@@ -48,29 +50,15 @@ npm_package(
     visibility = ["//visibility:public"],
 )
 
-ts_project(
-    name = "tinyland_tempo_utils_test_lib",
-    srcs = glob(["tests/**/*.test.ts"]),
-    declaration = False,
-    source_map = True,
-    tsconfig = ":tsconfig.json",
-    transpiler = "tsc",
-    deps = [
-        ":tinyland_tempo_utils",
-        ":node_modules",
-        ":node_modules/vitest",
-    ],
-)
-
 vitest_bin.vitest_test(
     name = "test",
     data = [
-        ":tinyland_tempo_utils",
-        ":tinyland_tempo_utils_test_lib",
         ":node_modules",
+        "tsconfig.json",
+        "//packages:tsconfig.base.json",
         ":node_modules/vitest",
         "vitest.config.ts",
-    ],
+    ] + glob(["src/**/*.ts"]) + glob(["tests/**/*.test.ts", "tests/**/*.ts"]),
     args = [
         "run",
         "--reporter=verbose",
