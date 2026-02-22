@@ -3,13 +3,18 @@
 #
 # Triggers:
 #   - Push to main: test only
-#   - Tag v*: test + publish to npmjs.com + GitHub Packages + GitLab Packages
+#   - Tag v*: test + publish to npmjs.com (+ GitHub/GitLab if configured)
 #   - Manual: workflow_dispatch for ad-hoc publish
 #
 # Required Secrets:
 #   NPM_TOKEN          - npm access token (org-level secret)
-#   GITLAB_TOKEN       - GitLab PAT with api scope (for GitLab registry publish)
-#   GITLAB_PROJECT_ID  - GitLab project ID (for registry URL)
+#
+# Optional Secrets (publish steps skipped if not set):
+#   GITLAB_TOKEN       - GitLab PAT with api scope
+#   GITLAB_PROJECT_ID  - GitLab project ID
+#
+# Optional Variables:
+#   ENABLE_GITHUB_PACKAGES - set to 'true' to enable GitHub Packages publish
 # =============================================================================
 
 name: CI & Publish
@@ -84,7 +89,9 @@ jobs:
 
   publish-github:
     needs: test
-    if: startsWith(github.ref, 'refs/tags/v') || github.event.inputs.publish == 'true'
+    if: >-
+      (startsWith(github.ref, 'refs/tags/v') || github.event.inputs.publish == 'true')
+      && vars.ENABLE_GITHUB_PACKAGES == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -114,21 +121,38 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/v') || github.event.inputs.publish == 'true'
     runs-on: ubuntu-latest
     steps:
+      - name: Check GitLab secrets
+        id: check
+        run: |
+          if [ -n "${{ secrets.GITLAB_TOKEN }}" ] && [ -n "${{ secrets.GITLAB_PROJECT_ID }}" ]; then
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "GitLab secrets not configured, skipping publish"
+          fi
+
       - uses: actions/checkout@v4
+        if: steps.check.outputs.configured == 'true'
 
       - uses: pnpm/action-setup@v4
+        if: steps.check.outputs.configured == 'true'
         with:
           version: 10
 
       - uses: actions/setup-node@v4
+        if: steps.check.outputs.configured == 'true'
         with:
           node-version: 22
           cache: 'pnpm'
 
       - run: pnpm install --frozen-lockfile
+        if: steps.check.outputs.configured == 'true'
+
       - run: pnpm run build
+        if: steps.check.outputs.configured == 'true'
 
       - name: Publish to GitLab Package Registry
+        if: steps.check.outputs.configured == 'true'
         run: |
           echo "@tummycrypt:registry=https://gitlab.com/api/v4/projects/${{ secrets.GITLAB_PROJECT_ID }}/packages/npm/" > .npmrc
           echo "//gitlab.com/api/v4/projects/${{ secrets.GITLAB_PROJECT_ID }}/packages/npm/:_authToken=${{ secrets.GITLAB_TOKEN }}" >> .npmrc
