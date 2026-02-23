@@ -1,6 +1,6 @@
-/**
- * Tests for Tempo TraceQL query client
- */
+
+
+
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import {
 	queryTraceQL,
@@ -15,9 +15,9 @@ import {
 	resetTempoUtilsConfig,
 } from '../src/config.js';
 
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
+
+
+
 
 function createMockResult(traceCount: number = 1): TraceQLResult {
 	return {
@@ -65,9 +65,9 @@ function createMockPerfTracker() {
 const oneHourAgo = new Date(Date.now() - 3600000);
 const now = new Date();
 
-// ---------------------------------------------------------------------------
-// Tests
-// ---------------------------------------------------------------------------
+
+
+
 
 describe('tempoQuery', () => {
 	let mockLogger: ReturnType<typeof createMockLogger>;
@@ -88,9 +88,9 @@ describe('tempoQuery', () => {
 		vi.restoreAllMocks();
 	});
 
-	// -----------------------------------------------------------------------
-	// queryTraceQL
-	// -----------------------------------------------------------------------
+	
+	
+	
 
 	describe('queryTraceQL', () => {
 		it('should send POST request with correct body', async () => {
@@ -265,9 +265,9 @@ describe('tempoQuery', () => {
 		});
 	});
 
-	// -----------------------------------------------------------------------
-	// Convenience query builders
-	// -----------------------------------------------------------------------
+	
+	
+	
 
 	describe('queryTracesByFingerprint', () => {
 		it('should construct correct TraceQL query', async () => {
@@ -323,9 +323,9 @@ describe('tempoQuery', () => {
 		});
 	});
 
-	// -----------------------------------------------------------------------
-	// queryTraceQLBatch
-	// -----------------------------------------------------------------------
+	
+	
+	
 
 	describe('queryTraceQLBatch', () => {
 		it('should execute multiple queries in parallel', async () => {

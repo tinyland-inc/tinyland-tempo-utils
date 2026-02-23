@@ -1,6 +1,6 @@
-/**
- * Tests for Child Span Reader
- */
+
+
+
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { SpanReader, ChildSpanReader } from '../src/ChildSpanReader.js';
 import type {
@@ -13,9 +13,9 @@ import {
 	resetTempoUtilsConfig,
 } from '../src/config.js';
 
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
+
+
+
 
 function createMockLogger() {
 	return {
@@ -150,9 +150,9 @@ function createOTLPTraceWithChildGeo() {
 	};
 }
 
-// ---------------------------------------------------------------------------
-// Tests
-// ---------------------------------------------------------------------------
+
+
+
 
 describe('ChildSpanReader', () => {
 	let mockLogger: ReturnType<typeof createMockLogger>;
@@ -170,9 +170,9 @@ describe('ChildSpanReader', () => {
 		vi.restoreAllMocks();
 	});
 
-	// -----------------------------------------------------------------------
-	// Constructor and backward compatibility
-	// -----------------------------------------------------------------------
+	
+	
+	
 
 	describe('constructor', () => {
 		it('should create instance with default options', () => {
@@ -202,9 +202,9 @@ describe('ChildSpanReader', () => {
 		});
 	});
 
-	// -----------------------------------------------------------------------
-	// readGeo - parent span path
-	// -----------------------------------------------------------------------
+	
+	
+	
 
 	describe('readGeo - parent span', () => {
 		it('should read geo data from parent span', async () => {
@@ -235,7 +235,7 @@ describe('ChildSpanReader', () => {
 			const reader = new SpanReader({ cacheEnabled: false });
 			const trace = createTraceWithoutGeo();
 
-			// Mock fetch to return no child span either
+			
 			vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
 				new Response(JSON.stringify({ batches: [] }), { status: 200 })
 			);
@@ -248,7 +248,7 @@ describe('ChildSpanReader', () => {
 			const reader = new SpanReader({ cacheEnabled: false });
 			const trace = createTraceWithParentGeo({ latitude: '999', longitude: '-76.5' });
 
-			// Will fall through to child span lookup
+			
 			vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
 				new Response(JSON.stringify({ batches: [] }), { status: 200 })
 			);
@@ -294,9 +294,9 @@ describe('ChildSpanReader', () => {
 		});
 	});
 
-	// -----------------------------------------------------------------------
-	// readGeo - child span fallback
-	// -----------------------------------------------------------------------
+	
+	
+	
 
 	describe('readGeo - child span fallback', () => {
 		it('should fall back to child span when parent has no geo', async () => {
@@ -342,9 +342,9 @@ describe('ChildSpanReader', () => {
 		});
 	});
 
-	// -----------------------------------------------------------------------
-	// Cache behavior
-	// -----------------------------------------------------------------------
+	
+	
+	
 
 	describe('cache', () => {
 		it('should cache results on first read', async () => {
@@ -386,23 +386,23 @@ describe('ChildSpanReader', () => {
 		});
 
 		it('should expire cached entries after TTL', async () => {
-			const reader = new SpanReader({ cacheTTL: 50 }); // 50ms TTL
+			const reader = new SpanReader({ cacheTTL: 50 }); 
 			const trace = createTraceWithParentGeo();
 
 			await reader.readGeo(trace);
 
-			// Wait for TTL to expire
+			
 			await new Promise(resolve => setTimeout(resolve, 60));
 
 			await reader.readGeo(trace);
 
 			const stats = reader.getCacheStats();
-			expect(stats.misses).toBe(2); // Both were misses
+			expect(stats.misses).toBe(2); 
 		});
 
 		it('should clear cache', () => {
 			const reader = new SpanReader();
-			// Manually trigger internal state by calling readGeo
+			
 			reader.clearCache();
 
 			const stats = reader.getCacheStats();
@@ -410,9 +410,9 @@ describe('ChildSpanReader', () => {
 		});
 	});
 
-	// -----------------------------------------------------------------------
-	// needsChildSpan
-	// -----------------------------------------------------------------------
+	
+	
+	
 
 	describe('needsChildSpan', () => {
 		it('should return false for trace with parent geo', () => {
@@ -437,9 +437,9 @@ describe('ChildSpanReader', () => {
 		});
 	});
 
-	// -----------------------------------------------------------------------
-	// readGeoBulk
-	// -----------------------------------------------------------------------
+	
+	
+	
 
 	describe('readGeoBulk', () => {
 		it('should process multiple traces', async () => {
@@ -478,9 +478,9 @@ describe('ChildSpanReader', () => {
 		});
 	});
 
-	// -----------------------------------------------------------------------
-	// parseSpanAttributes
-	// -----------------------------------------------------------------------
+	
+	
+	
 
 	describe('parseSpanAttributes', () => {
 		it('should parse string values', () => {
@@ -536,9 +536,9 @@ describe('ChildSpanReader', () => {
 		});
 	});
 
-	// -----------------------------------------------------------------------
-	// parseCoordinate
-	// -----------------------------------------------------------------------
+	
+	
+	
 
 	describe('parseCoordinate', () => {
 		it('should parse valid coordinate string', () => {
@@ -565,9 +565,9 @@ describe('ChildSpanReader', () => {
 		});
 	});
 
-	// -----------------------------------------------------------------------
-	// validateCoordinates
-	// -----------------------------------------------------------------------
+	
+	
+	
 
 	describe('validateCoordinates', () => {
 		it('should accept valid coordinates', () => {
@@ -591,9 +591,9 @@ describe('ChildSpanReader', () => {
 		});
 	});
 
-	// -----------------------------------------------------------------------
-	// Config injection lifecycle
-	// -----------------------------------------------------------------------
+	
+	
+	
 
 	describe('config injection', () => {
 		it('should work with no config (silent defaults)', async () => {
@@ -612,14 +612,14 @@ describe('ChildSpanReader', () => {
 
 			await reader.readGeo(trace);
 
-			// Logger should have been called during initialization and readGeo
+			
 			expect(mockLogger.debug).toHaveBeenCalled();
 		});
 
 		it('should respect config reset between tests', () => {
 			resetTempoUtilsConfig();
 			const reader = new SpanReader();
-			// Should not throw - uses silent defaults
+			
 			expect(reader).toBeInstanceOf(SpanReader);
 		});
 	});
